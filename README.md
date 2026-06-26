@@ -22,7 +22,7 @@
 ### Key Features
 
 | Feature | Details |
-|---|---|
+|---|---|---|
 | **Decomposition** | Uniform weight vectors (Das & Dennis, 1998) |
 | **Search strategy** | ABC with fitness-proportionate roulette wheel selection |
 | **Exploration** | Polynomial mutation |

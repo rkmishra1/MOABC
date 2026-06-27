@@ -22,12 +22,103 @@
 ### Key Features
 
 | Feature | Details |
-|---|---|---|
+|---|---|
 | **Decomposition** | Uniform weight vectors (Das & Dennis, 1998) |
 | **Search strategy** | ABC with fitness-proportionate roulette wheel selection |
 | **Exploration** | Polynomial mutation |
 | **Aggregation functions** | PBI · Tchebycheff · Normalised Tchebycheff · Modified Tchebycheff |
 | **Scalability** | Two-layer weight generation for many-objective problems |
+
+---
+
+## Algorithm Overview
+
+MOEAD-ABC integrates the **decomposition framework of MOEA/D** with the **swarm intelligence of the Artificial Bee Colony (ABC)** metaheuristic. The figure below illustrates the high-level workflow:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        MOEAD-ABC Pipeline                           │
+│                                                                     │
+│  Initialise weight vectors ──► Build neighbourhoods                 │
+│           │                                                         │
+│           ▼                                                         │
+│  Generate initial population  ──► Evaluate objectives              │
+│           │                                                         │
+│           ▼                                                         │
+│  ┌─── Employed Bee Phase ────────────────────────────────────┐     │
+│  │   For each sub-problem: generate & evaluate a new         │     │
+│  │   solution via ABC operators (roulette + mutation)        │     │
+│  └───────────────────────────────────────────────────────────┘     │
+│           │                                                         │
+│           ▼                                                         │
+│  ┌─── Onlooker Bee Phase ────────────────────────────────────┐     │
+│  │   Fitness-proportionate selection across neighbourhood;   │     │
+│  │   update reference point & neighbours if improved        │     │
+│  └───────────────────────────────────────────────────────────┘     │
+│           │                                                         │
+│           ▼                                                         │
+│  ┌─── Scout Bee Phase ───────────────────────────────────────┐     │
+│  │   Abandon stagnant sources; reinitialise randomly        │     │
+│  └───────────────────────────────────────────────────────────┘     │
+│           │                                                         │
+│           ▼                                                         │
+│  Max generations reached? ──No──► repeat                           │
+│           │ Yes                                                     │
+│           ▼                                                         │
+│       Return Pareto front approximation                             │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Results on ZDT1
+
+All experiments below run on the **ZDT1** benchmark (2-objective, 30 variables). Results are saved under [`MOABC/results/`](MOABC/results/).
+
+### True Pareto Front
+
+<p align="center">
+  <img src="MOABC/results/ZDT1_true_pareto_front.png" width="520" alt="ZDT1 true Pareto front"/>
+  <br><em>Figure 1 — True Pareto front of ZDT1</em>
+</p>
+
+---
+
+### Aggregation Function Comparison
+
+MOEAD-ABC is tested with four different aggregation (scalarisation) functions. Each panel shows the approximated Pareto front obtained after convergence.
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="MOABC/results/ZDT1_MOEADABC_Tchebycheff.png" width="340" alt="Tchebycheff"/><br>
+      <sub><b>Tchebycheff</b></sub>
+    </td>
+    <td align="center">
+      <img src="MOABC/results/ZDT1_MOEADABC_Normalised_Tchebycheff.png" width="340" alt="Normalised Tchebycheff"/><br>
+      <sub><b>Normalised Tchebycheff</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="MOABC/results/ZDT1_MOEADABC_Modified_Tchebycheff.png" width="340" alt="Modified Tchebycheff"/><br>
+      <sub><b>Modified Tchebycheff</b></sub>
+    </td>
+    <td align="center">
+      <img src="MOABC/results/ZDT1_MOEADABC_PBI.png" width="340" alt="PBI"/><br>
+      <sub><b>Penalty-Based Boundary Intersection (PBI)</b></sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+### All Aggregation Functions — Overlay
+
+<p align="center">
+  <img src="MOABC/results/ZDT1_MOEADABC_comparison.png" width="620" alt="Comparison of all aggregation functions"/>
+  <br><em>Figure 2 — Pareto front approximations across all four aggregation functions on ZDT1</em>
+</p>
 
 ---
 
